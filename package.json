@@ -1,0 +1,23 @@
+{
+  "name": "data-structure-algorithms",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajaythapliyal/data-structure-algorithms.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ajaythapliyal/data-structure-algorithms/issues"
+  },
+  "homepage": "https://github.com/ajaythapliyal/data-structure-algorithms#readme",
+  "devDependencies": {
+    "typescript": "^4.4.3"
+  }
+}
