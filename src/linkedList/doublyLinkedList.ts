@@ -1,7 +1,7 @@
-import { Node } from './linkedList';
+import { DoublyNode } from './linkedList';
 
-export class SinglyLinkedList<T> {
-  private headNode?: Node<T>;
+export class DoublyLinkedList<T> {
+  private headNode?: DoublyNode<T>;
   private length = 0;
 
   public append(item: T): void {
@@ -9,14 +9,15 @@ export class SinglyLinkedList<T> {
       this.prepend(item);
       return;
     }
-    const newNode = new Node(item);
+    const newNode = new DoublyNode(item);
     const lastNode = this.getLastNode()!;
     lastNode.next = newNode;
+    newNode.prev = lastNode;
     this.length++;
   }
 
   public prepend(item: T): void {
-    const newNode = new Node(item);
+    const newNode = new DoublyNode(item);
     newNode.next = this.headNode;
     this.headNode = newNode;
     this.length++;
@@ -26,17 +27,22 @@ export class SinglyLinkedList<T> {
     if (this.isPositionInvalid(position)) this.append(item);
     else if (position == 1) this.prepend(item);
     else {
-      const newNode = new Node(item);
+      const newNode = new DoublyNode(item);
       const [prevNode, nextNode] = this.getNodes(position);
       prevNode!.next = newNode;
+      newNode.prev = prevNode;
       newNode!.next = nextNode;
+      nextNode!.prev = newNode;
       this.length++;
     }
   }
 
   public removeFirst(): void {
     if (this.isEmpty) return;
+    const lostNode = this.headNode;
     this.headNode = this.headNode?.next;
+    if (this.headNode) this.headNode!.prev = undefined;
+    lostNode!.next = undefined;
     this.length--;
   }
 
@@ -46,8 +52,9 @@ export class SinglyLinkedList<T> {
       this.removeFirst();
       return;
     }
-    const prevNode = this.getNodes(this.size)[0];
+    const [prevNode, nextNode] = this.getNodes(this.size);
     prevNode!.next = undefined;
+    nextNode!.prev = undefined;
     this.length--;
   }
 
@@ -59,8 +66,12 @@ export class SinglyLinkedList<T> {
     }
     const nodes = this.getNodes(position);
     const prevNode = nodes[0];
-    const nextNode = nodes[1];
-    prevNode!.next = nextNode!.next;
+    const targetNode = nodes[1];
+    const nextNode = targetNode?.next;
+    prevNode!.next = nextNode;
+    if (nextNode) nextNode.prev = prevNode;
+    targetNode!.next = undefined;
+    targetNode!.prev = undefined;
     this.length--;
   }
 
@@ -70,6 +81,15 @@ export class SinglyLinkedList<T> {
       yield currentNode.item;
       currentNode = currentNode.next;
     }
+  }
+
+  public *reverseValues(
+    node = this.headNode,
+    pointer = 1
+  ): Generator<T, void, unknown> {
+    if (pointer > this.size) return;
+    yield* this.reverseValues(node?.next, pointer + 1);
+    yield node!.item;
   }
 
   get size(): number {
@@ -84,13 +104,13 @@ export class SinglyLinkedList<T> {
     return position < 1 || position > this.size;
   }
 
-  private getLastNode(): Node<T> | undefined {
+  private getLastNode(): DoublyNode<T> | undefined {
     return this.getNodes(this.size)[1];
   }
 
   private getNodes(
     position: number
-  ): [Node<T> | undefined, Node<T> | undefined] {
+  ): [DoublyNode<T> | undefined, DoublyNode<T> | undefined] {
     let prevNode = undefined;
     let nextNode = this.headNode;
     let currentPos = 1;
