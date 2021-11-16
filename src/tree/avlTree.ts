@@ -37,11 +37,9 @@ export class AvlTree<T> {
 
     while (parentToDeletedNode) {
       this.calculateHeight(parentToDeletedNode);
-      if (this.isImbalanced(parentToDeletedNode)) {
-        parentToDeletedNode = this.rebalance(parentToDeletedNode);
-      } else {
-        parentToDeletedNode = parentToDeletedNode.parent;
-      }
+      parentToDeletedNode = this.isImbalanced(parentToDeletedNode)
+        ? this.rebalance(parentToDeletedNode)
+        : parentToDeletedNode.parent;
     }
   }
 
