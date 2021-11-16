@@ -27,6 +27,10 @@ export class AvlTree<T> {
     innerInsert(item, this.root);
   }
 
+  public search(item: T): boolean {
+    return !!this.getNode(item, this.root)?.item;
+  }
+
   public *values(node = this.root): Generator<T, void, unknown> {
     if (!node) return;
     if (node.left) yield* this.values(node.left);
@@ -107,6 +111,17 @@ export class AvlTree<T> {
     node1.parent = node2;
     this.calculateHeight(node1, node2);
     return node2;
+  }
+
+  private getNode(
+    item: T,
+    node: AvlNode<T> | undefined
+  ): AvlNode<T> | undefined {
+    if (!node) return undefined;
+    else if (item === node.item) return node;
+
+    const nextNode = item < node.item ? node.left : node.right;
+    return this.getNode(item, nextNode);
   }
 
   private balanceFactor(node: AvlNode<T>): number {

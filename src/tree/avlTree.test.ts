@@ -21,7 +21,6 @@ describe('AvlTree', () => {
     testInsert([20, 4, 26, 3, 9, 21, 30, 2, 7, 11, 15]);
     testInsert([20, 4, 26, 3, 9, 8]);
     testInsert([20, 4, 26, 3, 9, 21, 30, 2, 7, 11, 8]);
-    //testInsert([...Array(100).keys()]);
 
     beforeEach(() => {
       tree = new AvlTree<number>();
@@ -47,5 +46,23 @@ describe('AvlTree', () => {
         );
       });
     }
+  });
+
+  describe('search', () => {
+    it('should return true if item is found', () => {
+      const items = [50, 30, 75, 10, 40, 60, 90, 39, 41];
+      items.forEach((item) => tree.insert(item));
+      expect(tree.search(75)).toBeTruthy();
+    });
+
+    it('should return false if tree is empty', () => {
+      expect(tree.search(42)).toBeFalsy();
+    });
+
+    it('should return false when item is not present', () => {
+      const items = [50, 30, 75, 10, 40, 60, 90, 39, 41];
+      items.forEach((item) => tree.insert(item));
+      expect(tree.search(100)).toBeFalsy();
+    });
   });
 });
