@@ -14,3 +14,15 @@ export class Node<T> {
     return !this.left || !this.right;
   }
 }
+
+export class AvlNode<T> extends Node<T> {
+  constructor(
+    public item: T,
+    public parent?: AvlNode<T>,
+    public left?: AvlNode<T>,
+    public right?: AvlNode<T>,
+    public height = 0
+  ) {
+    super(item, parent, left, right);
+  }
+}
