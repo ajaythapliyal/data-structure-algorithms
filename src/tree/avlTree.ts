@@ -18,8 +18,7 @@ export class AvlTree<T> {
         const newNode = innerInsert(item, node[relationship]);
         node[relationship] = newNode;
         newNode.parent = node;
-        node.height =
-          Math.max(node?.left?.height || 0, node?.right?.height || 0) + 1;
+        this.calculateHeight(node);
         if (this.isImbalanced(node)) return this.rebalance(node);
       }
       return node;
@@ -29,6 +28,21 @@ export class AvlTree<T> {
 
   public search(item: T): boolean {
     return !!this.getNode(item, this.root)?.item;
+  }
+
+  public delete(item: T): void {
+    const node = this.getNode(item, this.root);
+    if (!node) return;
+    let parentToDeletedNode = this.deleteNode(node, node?.parent);
+
+    while (parentToDeletedNode) {
+      this.calculateHeight(parentToDeletedNode);
+      if (this.isImbalanced(parentToDeletedNode)) {
+        parentToDeletedNode = this.rebalance(parentToDeletedNode);
+      } else {
+        parentToDeletedNode = parentToDeletedNode.parent;
+      }
+    }
   }
 
   public *values(node = this.root): Generator<T, void, unknown> {
@@ -51,14 +65,12 @@ export class AvlTree<T> {
     const nodes: AvlNode<T>[] = [node];
     [0, 1].forEach((index) => {
       const targetNode = nodes[index];
-      if (this.isLeftSubtreeLarger(targetNode)) {
-        nodes.push(targetNode.left!);
-        rotationType = `${rotationType}L`;
-      } else if (this.isRightSubtreeLarger(targetNode)) {
+      if (this.isRightSubtreeLarger(targetNode)) {
         nodes.push(targetNode.right!);
         rotationType = `${rotationType}R`;
       } else {
-        throw Error('Rotation type detection failed');
+        nodes.push(targetNode.left!);
+        rotationType = `${rotationType}L`;
       }
     });
     return this.rotate(nodes, rotationType)!;
@@ -124,6 +136,16 @@ export class AvlTree<T> {
     return this.getNode(item, nextNode);
   }
 
+  private successor(node: AvlNode<T>): AvlNode<T> | undefined {
+    if (!node.right) return;
+    return this.findMin(node.right);
+  }
+
+  private findMin(node: AvlNode<T>): AvlNode<T> {
+    if (!node.left) return node;
+    return this.findMin(node.left);
+  }
+
   private balanceFactor(node: AvlNode<T>): number {
     const heightLeft = node.left ? node.left.height + 1 : 0;
     const heightRight = node.right ? node.right.height + 1 : 0;
@@ -150,5 +172,26 @@ export class AvlTree<T> {
           ? 0
           : Math.max(node?.left?.height || 0, node?.right?.height || 0) + 1)
     );
+  }
+
+  private deleteNode(
+    node: AvlNode<T>,
+    parent?: AvlNode<T>
+  ): AvlNode<T> | undefined {
+    if (node.isLeaf) {
+      const child = node.item === parent?.left?.item ? 'left' : 'right';
+      parent ? (parent[child] = undefined) : (this.root = undefined);
+      node.parent = undefined;
+      return parent;
+    } else if (node.hasOneChild) {
+      const child = node.left ? 'left' : 'right';
+      node.parent![child] = node[child]!;
+      return node.parent;
+    } else {
+      const successor = this.successor(node)!;
+      const successorParent = successor.parent!;
+      node.item = successor.item;
+      return this.deleteNode(successor, successorParent);
+    }
   }
 }

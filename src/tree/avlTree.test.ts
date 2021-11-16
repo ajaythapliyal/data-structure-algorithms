@@ -65,4 +65,38 @@ describe('AvlTree', () => {
       expect(tree.search(100)).toBeFalsy();
     });
   });
+
+  describe('delete', () => {
+    testDelete([100, 40, 140, 10], 140);
+    testDelete([92, 3, 100, 1, 44], 100);
+    testDelete([92], 92);
+    testDelete([50, 30, 75, 10, 40, 60, 90, 39, 41], 39);
+    testDelete([50, 30, 75, 10, 40, 60, 90, 39, 41], 40);
+    testDelete([50, 30, 75, 10, 40, 60, 90, 39, 41], 30);
+    testDelete([50, 30, 75, 10, 40, 60, 90, 39, 41], 50);
+
+    function testDelete(input: number[], itemDel: number) {
+      it('should delete element', () => {
+        const output = Array.from(input)
+          .filter((item) => item != itemDel)
+          .sort((a, b) => a - b);
+        let index = 0;
+        input.forEach((item) => {
+          tree.insert(item);
+        });
+        tree.delete(itemDel);
+        for (const item of tree.values()) {
+          expect(item).toBe(output[index]);
+          index++;
+        }
+
+        expect(tree.height).toBeGreaterThanOrEqual(
+          Math.ceil(Math.log2(output.length + 1))
+        );
+        expect(tree.height).toBeLessThanOrEqual(
+          Math.floor(1.44 * Math.log2(output.length + 2) - 0.328)
+        );
+      });
+    }
+  });
 });
