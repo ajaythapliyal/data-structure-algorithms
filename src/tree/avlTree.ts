@@ -33,7 +33,32 @@ export class AvlTree<T> {
   public delete(item: T): void {
     const node = this.getNode(item, this.root);
     if (!node) return;
-    let parentToDeletedNode = this.deleteNode(node, node?.parent);
+
+    const innerDelete: (node: AvlNode<T>) => AvlNode<T> | undefined = (
+      node: AvlNode<T>
+    ) => {
+      const parent = node.parent;
+      const nodeParentRelation =
+        node.item === parent?.left?.item ? 'left' : 'right';
+      if (node.isLeaf) {
+        parent
+          ? (parent[nodeParentRelation] = undefined)
+          : (this.root = undefined);
+        node.parent = undefined;
+        return parent;
+      } else if (node.hasOneChild) {
+        const child = node.left ? 'left' : 'right';
+        parent![nodeParentRelation] = node[child]!;
+        node[child]!.parent = parent;
+        return node.parent;
+      } else {
+        const successor = this.successor(node)!;
+        node.item = successor.item;
+        return innerDelete(successor);
+      }
+    };
+
+    let parentToDeletedNode = innerDelete(node);
 
     while (parentToDeletedNode) {
       this.calculateHeight(parentToDeletedNode);
@@ -170,26 +195,5 @@ export class AvlTree<T> {
           ? 0
           : Math.max(node?.left?.height || 0, node?.right?.height || 0) + 1)
     );
-  }
-
-  private deleteNode(
-    node: AvlNode<T>,
-    parent?: AvlNode<T>
-  ): AvlNode<T> | undefined {
-    if (node.isLeaf) {
-      const child = node.item === parent?.left?.item ? 'left' : 'right';
-      parent ? (parent[child] = undefined) : (this.root = undefined);
-      node.parent = undefined;
-      return parent;
-    } else if (node.hasOneChild) {
-      const child = node.left ? 'left' : 'right';
-      node.parent![child] = node[child]!;
-      return node.parent;
-    } else {
-      const successor = this.successor(node)!;
-      const successorParent = successor.parent!;
-      node.item = successor.item;
-      return this.deleteNode(successor, successorParent);
-    }
   }
 }
