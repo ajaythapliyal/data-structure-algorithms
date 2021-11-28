@@ -65,11 +65,10 @@ describe('BinarySearchTree', () => {
     });
 
     describe('delete operation on tree with more than 1  node', () => {
-      function assert(deleteItem: number) {
-        const items = [50, 30, 75, 10, 40, 60, 90, 39, 41];
+      function assert(items: number[], deleteItem: number) {
         const expectedItems = items
           .filter((item) => item !== deleteItem)
-          .sort();
+          .sort((a, b) => a - b);
         let index = 0;
         items.forEach((item) => tree.insert(item));
         tree.delete(deleteItem);
@@ -80,19 +79,35 @@ describe('BinarySearchTree', () => {
       }
 
       it('should delete the leaf node successfully', () => {
-        assert(39);
+        assert([50, 30, 75, 10, 40, 60, 90, 39, 41], 39);
       });
 
       it('should delete node with one child successfully', () => {
-        assert(40);
+        assert([50, 30, 75, 10, 40, 60, 90, 39, 41], 40);
       });
 
       it('should delete node with two child successfully', () => {
-        assert(30);
+        assert([50, 30, 75, 10, 40, 60, 90, 39, 41], 30);
       });
 
       it('should delete the root node successfully', () => {
-        assert(50);
+        assert([50, 30, 75, 10, 40, 60, 90, 39, 41], 50);
+      });
+
+      it('should delete node successfully when succesor is non leaf ', () => {
+        assert([10, 5, 30, 2, 9, 25, 40, 35, 50, 38], 30);
+      });
+
+      it('should delete node successfully when succesor is non leaf ', () => {
+        assert([50, 25, 75, 20, 49, 51, 100, 30, 28, 29], 25);
+      });
+
+      it('should delete node successfully when succesor is non leaf ', () => {
+        assert([50, 25, 75, 20, 49, 51, 100, 30, 28], 25);
+      });
+
+      it('should delete node successfully when succesor is non leaf ', () => {
+        assert([50, 25, 75, 20, 49, 51, 100, 48, 30, 29, 31], 25);
       });
     });
   });

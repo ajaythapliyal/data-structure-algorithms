@@ -40,28 +40,32 @@ export class BinarySearchTree<T> {
   public delete(item: T): void {
     const node = this.getNode(item, this.root);
     if (!node) return;
-    const parent = node?.parent;
-    this.deleteNode(node, parent);
+
+    const innerDelete = (node: Node<T>) => {
+      const parent = node.parent;
+      const nodeParentRelation =
+        node.item === parent?.left?.item ? 'left' : 'right';
+      if (node.isLeaf) {
+        parent
+          ? (parent[nodeParentRelation] = undefined)
+          : (this.root = undefined);
+        node.parent = undefined;
+      } else if (node.hasOneChild) {
+        const child = node.left ? 'left' : 'right';
+        parent![nodeParentRelation] = node[child]!;
+        node[child]!.parent = parent;
+      } else {
+        const successor = this.successor(node)!;
+        node.item = successor.item;
+        innerDelete(successor);
+      }
+    };
+
+    innerDelete(node);
   }
 
   get isEmpty(): boolean {
     return this.root === undefined;
-  }
-
-  private deleteNode(node: Node<T>, parent?: Node<T>) {
-    if (node.isLeaf) {
-      const child = node.item === parent?.left?.item ? 'left' : 'right';
-      parent ? (parent[child] = undefined) : (this.root = undefined);
-      node.parent = undefined;
-    } else if (node.hasOneChild) {
-      const child = node.left ? 'left' : 'right';
-      node.parent![child] = node[child]!;
-    } else {
-      const successor = this.successor(node)!;
-      const successorParent = successor.parent!;
-      node.item = successor.item;
-      this.deleteNode(successor, successorParent);
-    }
   }
 
   private getNode(item: T, node: Node<T> | undefined): Node<T> | undefined {
