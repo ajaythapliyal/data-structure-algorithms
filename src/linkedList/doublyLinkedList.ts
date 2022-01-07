@@ -75,6 +75,29 @@ export class DoublyLinkedList<T> {
     this.length--;
   }
 
+  public removeItem(item: T): void {
+    if (this.isEmpty) return;
+    let target: DoublyNode<T> | undefined;
+    let current = this.headNode;
+    while (current) {
+      if (current.item === item) {
+        target = current;
+        break;
+      }
+      current = current.next;
+    }
+    if (!target) return;
+    if (target === this.headNode!) {
+      this.removeFirst();
+      return;
+    }
+    const predecessor = target.prev!;
+    const successor = target.next;
+    predecessor.next = successor;
+    if (successor) successor.prev = predecessor;
+    this.length--;
+  }
+
   public *values(): Generator<T, void, unknown> {
     let currentNode = this.headNode;
     while (currentNode) {
