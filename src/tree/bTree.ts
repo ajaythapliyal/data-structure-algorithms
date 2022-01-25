@@ -7,7 +7,7 @@ export class BTree<T> {
     if (degree < 2) this.degree = 2;
   }
 
-  private insert(item: T) {
+  public insert(item: T): void {
     if (this.isEmpty) this.root = new BTreeNode<T>(this.degree, true);
 
     const innerInsert = (
@@ -17,11 +17,16 @@ export class BTree<T> {
         return node.insert(item);
       }
       const splitNodes = innerInsert(node.getChild(item));
-      if (splitNodes) {
-        return node.insert(splitNodes[0], splitNodes[1], splitNodes[2]);
-      }
+      return splitNodes
+        ? node.insert(splitNodes[0], splitNodes[1], splitNodes[2])
+        : undefined;
     };
-    innerInsert(this.root!);
+
+    const splitNodes = innerInsert(this.root!);
+    if (splitNodes) {
+      this.root = new BTreeNode<T>(this.degree);
+      this.root.insert(splitNodes[0], splitNodes[1], splitNodes[2]);
+    }
   }
 
   public hasOverflown(node: BTreeNode<T>): boolean {
@@ -45,6 +50,6 @@ export class BTree<T> {
   }
 
   get isEmpty(): boolean {
-    return !!this.root;
+    return this.root === undefined;
   }
 }
