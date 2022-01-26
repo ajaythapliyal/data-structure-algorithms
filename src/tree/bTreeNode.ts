@@ -48,11 +48,21 @@ export class BTreeNode<T> {
     return this.children[closestKey];
   }
 
-  public setChild(key: T | undefined, node: BTreeNode<T>): void {
+  public *traverse(): Generator<T, void, unknown> {
+    let index = 0;
+    while (index <= this.keys.length) {
+      const key = this.keys[index];
+      if (!this.isLeaf) yield* this.children[String(key)].traverse();
+      if (key != undefined) yield key;
+      index++;
+    }
+  }
+
+  private setChild(key: T | undefined, node: BTreeNode<T>): void {
     this.children[JSON.stringify(key)] = node;
   }
 
-  public split(): [T, BTreeNode<T>, BTreeNode<T>] {
+  private split(): [T, BTreeNode<T>, BTreeNode<T>] {
     const medianIndex =
       this.size % 2 ? Math.floor(this.size / 2) : this.size / 2 - 1;
     const promotedKey = this.keys[medianIndex];

@@ -4,7 +4,7 @@ describe('BTreeNode', () => {
   let node: BTreeNode<number>;
 
   beforeEach(() => {
-    node = new BTreeNode<number>();
+    node = new BTreeNode<number>(5);
   });
 
   describe('insert', () => {

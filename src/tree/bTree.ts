@@ -29,24 +29,8 @@ export class BTree<T> {
     }
   }
 
-  public hasOverflown(node: BTreeNode<T>): boolean {
-    return node.size > this.maxChildren;
-  }
-
-  get maxChildren(): number {
-    return this.degree;
-  }
-
-  get minChildren(): number {
-    return Math.ceil(this.degree / 2);
-  }
-
-  get maxKeys(): number {
-    return this.degree - 1;
-  }
-
-  get minKeys(): number {
-    return this.minChildren - 1;
+  public *traverse(node = this.root): Generator<T, void, unknown> {
+    if (!this.isEmpty) yield* this.root!.traverse();
   }
 
   get isEmpty(): boolean {
