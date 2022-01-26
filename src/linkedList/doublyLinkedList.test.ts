@@ -102,6 +102,35 @@ describe('DoublyLinkedList', () => {
     }
   });
 
+  describe('removeItem', () => {
+    it('should remove the given element', () => {
+      const appendList = ['Michael', 'Jim', 'Dwight', 'Pam', 'Andy'];
+      const expectList = ['Michael', 'Dwight', 'Pam', 'Andy'];
+      let expectIndex = 0;
+      appendList.forEach((item) => doublyLinkedList.append(item));
+      expect(doublyLinkedList.size).toBe(appendList.length);
+      doublyLinkedList.removeItem('Jim');
+      for (const item of doublyLinkedList.values()) {
+        expect(item).toBe(expectList[expectIndex]);
+        expectIndex++;
+      }
+      expect(doublyLinkedList.size).toBe(expectList.length);
+    });
+
+    it('should not mutate if given item is not present', () => {
+      const appendList = ['Michael', 'Jim', 'Dwight', 'Pam', 'Andy'];
+      let expectIndex = 0;
+      appendList.forEach((item) => doublyLinkedList.append(item));
+      expect(doublyLinkedList.size).toBe(appendList.length);
+      doublyLinkedList.removeItem('Jetha');
+      for (const item of doublyLinkedList.values()) {
+        expect(item).toBe(appendList[expectIndex]);
+        expectIndex++;
+      }
+      expect(doublyLinkedList.size).toBe(appendList.length);
+    });
+  });
+
   it('should reverse traversal correctly', () => {
     const appendList = ['Michael', 'Dwight', 'Pam'];
     appendList.forEach((item) => doublyLinkedList.append(item));
