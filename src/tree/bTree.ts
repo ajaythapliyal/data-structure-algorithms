@@ -33,6 +33,11 @@ export class BTree<T> {
     if (!this.isEmpty) yield* this.root!.traverse();
   }
 
+  public search(item: T): boolean {
+    if (this.isEmpty) return false;
+    return this.root!.search(item);
+  }
+
   get isEmpty(): boolean {
     return this.root === undefined;
   }

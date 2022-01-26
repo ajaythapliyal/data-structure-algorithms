@@ -58,6 +58,25 @@ export class BTreeNode<T> {
     }
   }
 
+  public search(item: T): boolean {
+    let index = 0;
+    let keyFound: T | undefined;
+    while (index < this.keys.length) {
+      const key = this.key(index);
+      if (key >= item) {
+        keyFound = key;
+        break;
+      }
+      index++;
+    }
+    if (keyFound === item) return true;
+    else if (keyFound != undefined && keyFound > item && !this.isLeaf)
+      return this.children[String(keyFound)].search(item);
+    else if (keyFound == undefined && !this.isLeaf)
+      return this.children['undefined'].search(item);
+    else return false;
+  }
+
   private setChild(key: T | undefined, node: BTreeNode<T>): void {
     this.children[JSON.stringify(key)] = node;
   }
