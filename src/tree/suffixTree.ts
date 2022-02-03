@@ -21,22 +21,26 @@ export class SuffixTree {
         suffixIndex: number
       ) => {
         let matchedNode: Node | undefined = undefined;
-        let nodeSliceIndex = -1;
+        let nodeIndex = -1;
         for (const nodeChild of node.children) {
-          nodeSliceIndex = 0;
+          if (matchedNode) break;
+          nodeIndex = 0;
           while (
-            nodeSliceIndex < nodeChild.textSlice.length &&
-            nodeChild.textSlice[nodeSliceIndex] === suffix[suffixIndex]
+            nodeIndex < nodeChild.textSlice.length &&
+            nodeChild.textSlice[nodeIndex] === suffix[suffixIndex]
           ) {
             matchedNode = nodeChild;
-            nodeSliceIndex++;
+            nodeIndex++;
             suffixIndex++;
           }
         }
         if (matchedNode) {
-          insert(matchedNode, nodeSliceIndex, suffixIndex);
+          insert(matchedNode, nodeIndex, suffixIndex);
         } else {
-          if (unmatchedNodeIndex) {
+          if (
+            unmatchedNodeIndex &&
+            unmatchedNodeIndex < node.textSlice.length
+          ) {
             let splitIndex = 0;
             const matchedNodeSlice: string[] = [];
             const unmatchedNodeSlice: string[] = [];
@@ -46,7 +50,10 @@ export class SuffixTree {
                 : unmatchedNodeSlice.push(node.textSlice[splitIndex]);
               splitIndex++;
             }
-            node.children.push(new Node(unmatchedNodeSlice, node.textIndex));
+            const unmatchedNode = new Node(unmatchedNodeSlice, node.textIndex);
+            unmatchedNode.children = node.children;
+            node.children = [];
+            node.children.push(unmatchedNode);
             node.textSlice = matchedNodeSlice;
             node.textIndex = undefined;
           }
