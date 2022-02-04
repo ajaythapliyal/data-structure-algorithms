@@ -9,77 +9,100 @@ export class SuffixTree {
   }
 
   private build(): void {
-    for (let index = this.doc.length - 1; index > -1; index--) {
+    for (let docIndex = this.doc.length - 1; docIndex > -1; docIndex--) {
       const suffix: string[] = [];
-      for (let j = index; j < this.doc.length; j++) {
+      for (let j = docIndex; j < this.doc.length; j++) {
         suffix.push(this.doc[j]);
       }
 
       const insert = (
         node: Node,
-        matchedCount: number,
+        matchCount: number,
         suffixIndex: number
       ): void => {
-        const [childNode, count] = this.findChild(node, suffix, suffixIndex);
+        const [childNode, count] = node.findChild(suffix, suffixIndex);
 
         if (!childNode) {
-          this.splitRequired(node, matchedCount) &&
-            this.split(node, matchedCount);
-          return this.addChild(node, suffix, suffixIndex, index);
+          node.splitRequired(matchCount) && node.split(matchCount);
+          return node.addChild(suffix, suffixIndex, docIndex);
         }
         return insert(childNode, count, suffixIndex + count);
       };
+
       insert(this.root, 0, 0);
     }
   }
 
-  private findChild(
-    node: Node,
+  public search(pattern: string[]): number[] {
+    let childNode: Node | undefined = this.root,
+      parentNode: Node | undefined,
+      matchCount: number,
+      patternIndex = 0;
+    do {
+      parentNode = childNode;
+      [childNode, matchCount] = childNode.findChild(pattern, patternIndex);
+      patternIndex += matchCount;
+    } while (childNode);
+    if (!parentNode) return [];
+    else return parentNode.docIndexes();
+  }
+}
+
+class Node {
+  private text: string[] = [];
+  private children: Node[] = [];
+  private docIndex: number | undefined = undefined;
+
+  constructor(text?: string[], docIndex?: number) {
+    text && (this.text = text);
+    this.docIndex = docIndex;
+  }
+
+  public findChild(
     suffix: string[],
     suffixIndex: number
   ): [Node | undefined, number] {
-    let matchedNode: Node | undefined = undefined;
+    let matchNode: Node | undefined = undefined;
     let suffixIndexCpy = suffixIndex;
-    let index = 0;
-    for (const child of node.children) {
-      if (matchedNode) break;
-      index = 0;
+    let childIndex = 0;
+    for (const child of this.children) {
+      if (matchNode) break;
+      childIndex = 0;
       while (
-        index < child.text.length &&
-        child.text[index] === suffix[suffixIndexCpy]
+        childIndex < child.text.length &&
+        child.text[childIndex] === suffix[suffixIndexCpy]
       ) {
-        matchedNode = child;
-        index++;
+        matchNode = child;
+        childIndex++;
         suffixIndexCpy++;
       }
     }
-    return [matchedNode, index];
+    return [matchNode, childIndex];
   }
 
-  private splitRequired(node: Node, matchedCount: number): boolean {
-    return !!matchedCount && matchedCount < node.text.length;
+  public splitRequired(matchCount: number): boolean {
+    return !!matchCount && matchCount < this.text.length;
   }
 
-  private split(node: Node, matchedCount: number): void {
+  public split(matchedCount: number): void {
     let index = 0;
     const matchedText: string[] = [];
     const unmatchedText: string[] = [];
-    while (index < node.text.length) {
+    while (index < this.text.length) {
       index < matchedCount
-        ? matchedText.push(node.text[index])
-        : unmatchedText.push(node.text[index]);
+        ? matchedText.push(this.text[index])
+        : unmatchedText.push(this.text[index]);
       index++;
     }
-    const unmatchedNode = new Node(unmatchedText, node.docIndex);
-    unmatchedNode.children = node.children;
-    node.children = [];
-    node.children.push(unmatchedNode);
-    node.text = matchedText;
-    node.docIndex = undefined;
+    const unmatchedNode = new Node(unmatchedText, this.docIndex);
+    unmatchedNode.children = this.children;
+    this.children = [];
+    this.children.push(unmatchedNode);
+    this.text = matchedText;
+    this.docIndex = undefined;
   }
 
-  private addChild(
-    node: Node,
+  public addChild(
     suffix: string[],
     suffixIndex: number,
     docIndex: number
@@ -89,19 +112,18 @@ export class SuffixTree {
       text.push(suffix[suffixIndex]);
       suffixIndex++;
     }
-    node.children.push(new Node(text, docIndex));
+    this.children.push(new Node(text, docIndex));
     return;
   }
-}
 
-class Node {
-  public text: string[] = [];
-  public children: Node[] = [];
-  public docIndex: number | undefined = undefined;
-
-  constructor(text?: string[], docIndex?: number) {
-    text && (this.text = text);
-    this.docIndex = docIndex;
+  public docIndexes(): number[] {
+    const docIndexes: number[] = [];
+    function internalDocIndex(node: Node): void {
+      if (node.isLeaf) docIndexes.push(node.docIndex!);
+      else node.children.forEach((child) => internalDocIndex(child));
+    }
+    internalDocIndex(this);
+    return docIndexes;
   }
 
   get isInternalNode(): boolean {
