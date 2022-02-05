@@ -43,7 +43,7 @@ export class SuffixTree {
       [childNode, matchCount] = childNode.findChild(pattern, patternIndex);
       patternIndex += matchCount;
     } while (childNode);
-    if (!parentNode) return [];
+    if (parentNode == this.root) return [];
     else return parentNode.docIndexes();
   }
 }
