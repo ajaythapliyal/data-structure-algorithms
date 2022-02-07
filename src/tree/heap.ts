@@ -14,6 +14,25 @@ export class Heap<T> {
     return this.elements[0];
   }
 
+  public insert(element: T) {
+    const bubbleSwap = (elementIndex: number, parentIndex: number) => {
+      if (
+        this.elements[parentIndex] < this.elements[elementIndex] ||
+        elementIndex < 1
+      )
+        return;
+      this.swap(elementIndex, parentIndex);
+      bubbleSwap(parentIndex, this.parent(parentIndex));
+    };
+
+    this.elements.push(element);
+    const elementIndex = this.elements.length - 1;
+    const parentIndex = this.parent(elementIndex);
+    if (element < this.elements[parentIndex]) {
+      bubbleSwap(elementIndex, parentIndex);
+    }
+  }
+
   private build(): void {
     let index = this.largestNonLeafIndex;
     while (index > -1) {
@@ -26,9 +45,6 @@ export class Heap<T> {
     const element = this.elements[index];
     const leftIndex = this.left(index);
     const rightIndex = this.right(index);
-    if (leftIndex > this.elements.length || rightIndex > this.elements.length) {
-      return;
-    }
     const smallestChild =
       this.elements[leftIndex] < this.elements[rightIndex]
         ? leftIndex
@@ -45,6 +61,10 @@ export class Heap<T> {
 
   private right(index: number): number {
     return 2 * (index + 1);
+  }
+
+  private parent(index: number): number {
+    return Math.floor(index / 2);
   }
 
   private get largestNonLeafIndex(): number {
