@@ -10,6 +10,10 @@ export class Heap<T> {
     return Math.floor(Math.log2(this.elements.length));
   }
 
+  get min(): T {
+    return this.elements[0];
+  }
+
   private build(): void {
     let index = this.largestNonLeafIndex;
     while (index > -1) {
@@ -19,9 +23,20 @@ export class Heap<T> {
   }
 
   private heapify(index: number): void {
-    //please heapify
     const element = this.elements[index];
-    const left = this.elements[this.left(index)];
+    const leftIndex = this.left(index);
+    const rightIndex = this.right(index);
+    if (leftIndex > this.elements.length || rightIndex > this.elements.length) {
+      return;
+    }
+    const smallestChild =
+      this.elements[leftIndex] < this.elements[rightIndex]
+        ? leftIndex
+        : rightIndex;
+    if (element > this.elements[smallestChild]) {
+      this.swap(index, smallestChild);
+      this.heapify(smallestChild);
+    }
   }
 
   private left(index: number): number {
@@ -34,5 +49,11 @@ export class Heap<T> {
 
   private get largestNonLeafIndex(): number {
     return Math.pow(2, this.height) - 2;
+  }
+
+  private swap(firstIndex: number, secondIndex: number): void {
+    const temp = this.elements[firstIndex];
+    this.elements[firstIndex] = this.elements[secondIndex];
+    this.elements[secondIndex] = temp;
   }
 }
