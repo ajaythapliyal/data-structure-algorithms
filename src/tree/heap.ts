@@ -1,8 +1,8 @@
 export class Heap<T> {
   private elements: T[] = [];
 
-  constructor(elements: T[]) {
-    this.elements = elements;
+  constructor(elements?: T[]) {
+    this.elements = elements ? elements : [];
     this.build();
   }
 
@@ -14,7 +14,7 @@ export class Heap<T> {
     return this.elements[0];
   }
 
-  public insert(element: T) {
+  public insert(element: T): void {
     const bubbleSwap = (elementIndex: number, parentIndex: number) => {
       if (
         this.elements[parentIndex] < this.elements[elementIndex] ||
@@ -31,6 +31,13 @@ export class Heap<T> {
     if (element < this.elements[parentIndex]) {
       bubbleSwap(elementIndex, parentIndex);
     }
+  }
+
+  public deleteMin(): void {
+    const element = this.elements.pop();
+    if (element == undefined || this.elements.length == 0) return;
+    this.elements[0] = element;
+    this.heapify(0);
   }
 
   private build(): void {
@@ -64,7 +71,7 @@ export class Heap<T> {
   }
 
   private parent(index: number): number {
-    return Math.floor(index / 2);
+    return Math.floor((index - 1) / 2);
   }
 
   private get largestNonLeafIndex(): number {
