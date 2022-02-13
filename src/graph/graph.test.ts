@@ -10,7 +10,7 @@ describe('Graph', () => {
   describe('build graph', () => {
     it('should build graph correctly', () => {
       expect(graph.isEmpty).toBeTruthy();
-      expect(graph.size).toBe(0);
+      expect(graph.vertexCount).toBe(0);
 
       for (let i = 1; i <= 8; i++) {
         graph.addVertex({ id: i });
@@ -28,6 +28,15 @@ describe('Graph', () => {
         { 7: 8 },
         { 4: 8 }
       ];
+
+      edges.forEach((edge) => {
+        Object.entries(edge).forEach((entry) => {
+          const [key, val] = entry;
+          graph.addEdge({ id: parseInt(key.toString()) }, { id: val });
+        });
+      });
+
+      expect(graph.vertexCount).toBe(8);
     });
   });
 });

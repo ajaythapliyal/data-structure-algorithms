@@ -1,17 +1,24 @@
 export class Graph {
-  private adjacenyList: { [key: number]: Array<number> | undefined } = {};
-  public size = 0;
+  private adjacenyList: { [key: number]: Array<number> } = {};
+  public vertexCount = 0;
   public addVertex(vertex: Vertex): void {
-    this.adjacenyList[vertex.id] = undefined;
+    this.adjacenyList[vertex.id] = [];
+    this.vertexCount++;
   }
 
-  public addEdge(adjacentVertex1: Vertex, adjacentVertex2: Vertex): void {
-    this.adjacenyList[adjacentVertex1.id]?.push(adjacentVertex2.id);
-    this.adjacenyList[adjacentVertex2.id]?.push(adjacentVertex1.id);
+  public addEdge(vertex1: Vertex, vertex2: Vertex): void {
+    const v1AdjacencyList = this.adjacenyList[vertex1.id];
+    const v2AdjacencyList = this.adjacenyList[vertex2.id];
+    if (!v1AdjacencyList.includes(vertex2.id)) {
+      v1AdjacencyList.push(vertex2.id);
+    }
+    if (!v2AdjacencyList.includes(vertex1.id)) {
+      v2AdjacencyList.push(vertex1.id);
+    }
   }
 
   get isEmpty(): boolean {
-    return !this.size;
+    return !this.vertexCount;
   }
 }
 
