@@ -35,25 +35,4 @@ function merge(sortedFirst: number[], sortedSecond: number[]): number[] {
     }
   }
   return sortedCombined;
-  // while (index < sortedFirst.length && index < sortedSecond.length) {
-  //   if (sortedFirst[index] < sortedSecond[index]) {
-  //     sortedCombined.push(sortedFirst[index]);
-  //     sortedCombined.push(sortedSecond[index]);
-  //   } else {
-  //     sortedCombined.push(sortedSecond[index]);
-  //     sortedCombined.push(sortedFirst[index]);
-  //   }
-  //   index++;
-  // }
-  // if (index < sortedFirst.length) {
-  //   while (index < sortedFirst.length) {
-  //     sortedCombined.push(sortedFirst[index]);
-  //     index++;
-  //   }
-  // } else if (index < sortedSecond.length) {
-  //   while (index < sortedSecond.length) {
-  //     sortedCombined.push(sortedSecond[index]);
-  //     index++;
-  //   }
-  // }
 }
