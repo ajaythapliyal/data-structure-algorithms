@@ -67,4 +67,33 @@ describe('Graph', () => {
       expect(graph.vertexCount).toBe(5);
     });
   });
+
+  describe('BFS', () => {
+    it('should discover all nodes reachable from source with corrent distance', () => {
+      for (let i = 1; i <= 8; i++) {
+        graph.addVertex({ id: i });
+      }
+
+      const edges = [
+        { 1: 2 },
+        { 1: 5 },
+        { 2: 6 },
+        { 6: 3 },
+        { 6: 7 },
+        { 3: 7 },
+        { 3: 4 },
+        { 7: 4 },
+        { 7: 8 },
+        { 4: 8 }
+      ];
+      edges.forEach((edge) => {
+        Object.entries(edge).forEach((entry) => {
+          const [key, val] = entry;
+          graph.addEdge({ id: parseInt(key.toString()) }, { id: val });
+        });
+      });
+
+      expect(graph.bfs({ id: 2 })).toBeTruthy();
+    });
+  });
 });
