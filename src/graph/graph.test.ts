@@ -38,5 +38,33 @@ describe('Graph', () => {
 
       expect(graph.vertexCount).toBe(8);
     });
+
+    it('should build graph correctly #2', () => {
+      expect(graph.isEmpty).toBeTruthy();
+      expect(graph.vertexCount).toBe(0);
+
+      for (let i = 1; i <= 5; i++) {
+        graph.addVertex({ id: i });
+      }
+
+      const edges = [
+        { 1: 2 },
+        { 1: 5 },
+        { 2: 5 },
+        { 5: 4 },
+        { 2: 4 },
+        { 2: 3 },
+        { 4: 3 }
+      ];
+
+      edges.forEach((edge) => {
+        Object.entries(edge).forEach((entry) => {
+          const [key, val] = entry;
+          graph.addEdge({ id: parseInt(key.toString()) }, { id: val });
+        });
+      });
+
+      expect(graph.vertexCount).toBe(5);
+    });
   });
 });
