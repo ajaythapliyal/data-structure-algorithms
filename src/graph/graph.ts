@@ -48,6 +48,24 @@ export class Graph {
     return bfsVertices;
   }
 
+  public dfs(vertex: Vertex): { [key: number]: [number, number] } | undefined {
+    if (!this.adjacenyList[vertex.id]) return;
+    let timestamp = 0;
+    const visited: { [key: number]: [number, number] } = {};
+
+    const innerDfs = (vertex: Vertex): void => {
+      visited[vertex.id] = [timestamp++, NaN];
+      const neighbours = this.adjacenyList[vertex.id];
+      neighbours.forEach((neighbour) => {
+        if (!visited[neighbour]) innerDfs({ id: neighbour });
+      });
+      visited[vertex.id][1] = timestamp++;
+    };
+
+    innerDfs(vertex);
+    return visited;
+  }
+
   get isEmpty(): boolean {
     return !this.vertexCount;
   }

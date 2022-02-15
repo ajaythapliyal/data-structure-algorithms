@@ -96,4 +96,32 @@ describe('Graph', () => {
       expect(graph.bfs({ id: 2 })).toBeTruthy();
     });
   });
+
+  describe('DFS', () => {
+    it('it should discover all reachable vertices with correct timestamp', () => {
+      for (let i = 1; i <= 6; i++) {
+        graph.addVertex({ id: i });
+      }
+
+      const edges = [
+        { 1: 2 },
+        { 1: 4 },
+        { 4: 2 },
+        { 2: 5 },
+        { 5: 4 },
+        { 3: 5 },
+        { 3: 6 },
+        { 6: 6 }
+      ];
+      edges.forEach((edge) => {
+        Object.entries(edge).forEach((entry) => {
+          const [key, val] = entry;
+          graph.addEdge({ id: parseInt(key.toString()) }, { id: val });
+        });
+      });
+
+      const dfsTree = graph.dfs({ id: 1 });
+      expect(dfsTree).toBeTruthy();
+    });
+  });
 });
