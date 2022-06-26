@@ -14,6 +14,11 @@
 [**Heap**](https://github.com/ajaythapliyal/data-structure-algorithms/blob/main/src/tree/suffixTree.ts) : An array based min heap implementation. Keeps the tree in sorted order and always returns min element.
 
 
+## Graph :
+
+[**Graph**](https://github.com/ajaythapliyal/data-structure-algorithms/blob/main/src/tree/suffixTree.ts) : An adjacency matrix graph with BFS and DFS operations.
+
+
 ## Elementary Data structures : 
 
 [**Singly Linked List**](https://github.com/ajaythapliyal/data-structure-algorithms/blob/main/src/linkedList/singlyLinkedList.ts) : A node based implementation of Singly linked list.
@@ -23,6 +28,3 @@
 [**Linear Queue**](https://github.com/ajaythapliyal/data-structure-algorithms/blob/main/src/queue/LinearArrayQueue.ts) : An Array backed implementation of Linear queue.
 
 [**Circular Queue**](https://github.com/ajaythapliyal/data-structure-algorithms/blob/main/src/queue/CircularArrayQueue.ts) : An implementation of fixed length Circular queue.
-
-
-
