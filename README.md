@@ -11,7 +11,7 @@
 
 [**Suffix tree**](https://github.com/ajaythapliyal/data-structure-algorithms/blob/main/src/tree/heap.ts) : Suffix tree builds the tree data structure based on all the suffixes of the input text. Searching over this tree allows for fast pattern matching.
 
-[**Heap**](https://github.com/ajaythapliyal/data-structure-algorithms/blob/main/src/tree/suffixTree.ts) : An array based min heap implementation. Keeps the tree in sorted order and always returns min element.
+[**Heap**](https://github.com/ajaythapliyal/data-structure-algorithms/blob/main/src/tree/heap.ts) : An array based min heap implementation. Keeps the tree in sorted order and always returns min element.
 
 
 ## Graph :
